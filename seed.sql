@@ -5,3 +5,12 @@ values
 ('mow lawn', false),
 ('ride bike', true),
 ('juggle', false);
+
+insert into users
+(name)
+values
+('Collin'),
+('Hallie'),
+('John'),
+('Whatshisname'),
+('Whatshername');
