@@ -1,5 +1,10 @@
-// hello
+// we want to require pg-promise library
+const pgp = require('pg-promise')();
+const db = pgp({
+    host: 'localhost',
+    port: 5432,
+    database: 'my-todo-app-db'    
+});
 
-// console.log(`helloooooo ${personName}`)
-
-console.log('whaaaaaaa')
+db.any('select * from todos;')
+.then(console.log)
