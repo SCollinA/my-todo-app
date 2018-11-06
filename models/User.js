@@ -1,10 +1,5 @@
 // we want to require pg-promise library
-const pgp = require('pg-promise')();
-const db = pgp({
-    host: 'localhost',
-    port: 5432,
-    database: 'my-todo-app-db'    
-});
+const db = require('./db')
 
 // Create
 function addUser(name) {
@@ -27,6 +22,10 @@ function getUserById(id) {
 }
 
 // Update
+function getTodosForUser(user_id) {
+    return db.any('select * from todos where user_id=$1', [user_id])
+}
+
 function updateUserNameById(newName, id) {
     return db.result('update users set name=$1 where id=$2', [newName, id])
 }
@@ -41,5 +40,6 @@ module.exports = {
     getAllUsers,
     getUserById,
     updateUserNameById,
-    deleteUserById
+    deleteUserById,
+    getTodosForUser,
 }
