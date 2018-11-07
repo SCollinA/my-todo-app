@@ -12,7 +12,7 @@ class Todo {
     // create
     static add(name, completed) {
         return db.one('insert into todos (name, completed) values ($1, $2) returning id', [name, completed])
-        .then(result => Todo.getById(result.id))
+        .then(result => new Todo(result.id, result.name, result.completed, result.user_id))
     }
     
     // retrieve
@@ -23,19 +23,23 @@ class Todo {
 
     static getAll() {
         return db.any('select * from todos')
+        .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed, result.user_id)))
     }
 
     // update
     assignToUser(user_id) {
+        this.user_id = user_id
         return db.one('update todos set user_id=$1 where id=$2 returning id', [user_id, this.id])
     }
 
     updateName(newName) {
+        this.name = newName
         return db.result('update todos set name=$1 where id=$2', [newName, this.id])
     }
     
     toggleComplete() {
-        return db.result('update todos set completed=$1 where id=$2', [!this.completed, this.id])
+        this.completed = !this.completed
+        return db.result('update todos set completed=$1 where id=$2', [this.completed, this.id])
     }
 
     // delete
