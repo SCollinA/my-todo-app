@@ -10,7 +10,7 @@ class User {
     // Create
     static add(name) {
         return db.one('insert into users (name) values ($1) returning id', [name])
-        .then(result => new User(result.id, name))
+        .then(result => User.getById(result.id))
     }
     
     // Retrieve

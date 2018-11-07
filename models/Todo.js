@@ -2,27 +2,23 @@
 const db = require('./db')
 
 class Todo {
-    constructor (id, name, completed) {
+    constructor (id, name, completed, user_id) {
         this.id = id
         this.name = name
         this.completed = completed
+        this.user_id = user_id
     }
     
     // create
     static add(name, completed) {
         return db.one('insert into todos (name, completed) values ($1, $2) returning id', [name, completed])
-        .then(console.log)
+        .then(result => Todo.getById(result.id))
     }
     
     // retrieve
     static getById(id) {
         return db.one(`select * from todos where id=$1`, [id])
-        .catch(err => {
-            console.log('whaaaaaa?')
-            return {
-                name: 'no todo found.'
-            }
-        })
+        .then(result => new Todo(result.id, result.name, result.completed, result.user_id))
     }
 
     static getAll() {
@@ -31,7 +27,7 @@ class Todo {
 
     // update
     assignToUser(user_id) {
-        return db.result('update todos set user_id=$1 where id=$2', [user_id, this.id])
+        return db.one('update todos set user_id=$1 where id=$2 returning id', [user_id, this.id])
     }
 
     updateName(newName) {
@@ -39,7 +35,7 @@ class Todo {
     }
     
     toggleComplete() {
-        return db.result('update todos set completed=$1 where id=$2', [!row.completed, this.id])
+        return db.result('update todos set completed=$1 where id=$2', [!this.completed, this.id])
     }
 
     // delete

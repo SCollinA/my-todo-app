@@ -12,5 +12,31 @@ const Todo = require('./models/Todo')
 const User = require('./models/User')
 
 
-Todo.addTodo('walk the chewbacca', true)
-User.addUser('Jack')
+
+User.add('Jack')
+.then(user => {
+    console.log(user)
+    return Todo.add('walk the chewbacca', true)
+    .then(todo => todo.assignToUser(user.id))
+    .then(result => Todo.getById(result.id))
+    .then(todo => {
+        return todo.toggleComplete()
+        .then(() => Todo.getById(todo.id))
+    })
+    .then(todo => {
+        return todo.updateName('walk the yoda')
+        .then(() => Todo.getById(todo.id))
+    })
+    .then(todo => {
+        return todo.assignToUser(5)
+        .then(() => Todo.getById(todo.id))
+    })
+    .then(() => {
+        return User.getById(5)
+        .then(user => {
+            console.log(user)
+            user.getTodos()
+            .then(console.log)    
+        })
+    })
+})
