@@ -1,45 +1,53 @@
 // we want to require pg-promise library
 const db = require('./db')
 
-// Create
-function addUser(name) {
-    return db.result('insert into users (name) values ($1)', [name])
+class User {
+    constructor(id, name) {
+        this.name = name
+        this.id = id
+    }
+
+    // Create
+    static add(name) {
+        return db.one('insert into users (name) values ($1) returning id', [name])
+        .then(result => new User(result.id, name))
+    }
+    
+    // Retrieve
+    static getById(id) {
+        return db.one('select * from users where id=$1', [id])
+        .then(result => new User(result.id, result.name))
+    }
+    
+    static getAll() {
+        return db.any('select * from users')
+    }
+
+    getTodos() {
+        return db.any('select * from todos where user_id=$1', [this.id])
+    }
+    
+    // Update
+    updateName(newName) {
+        return db.result('update users set name=$1 where id=$2', [newName, this.id])
+    }
+    
+    // Delete
+    delete() {
+        return db.result('delete from users where id=$1', [this.id])
+    }
+    
+    static deleteById(id) {
+        return db.result('delete from users where id=$1', [id])
+    }
 }
 
-// Retrieve
-function getAllUsers() {
-    return db.any('select * from users')
-    .catch(err => {
-        console.log('whaaaaaa?')
-        return {
-            name: 'no todo found.'
-        }
-    })
-}
-
-function getUserById(id) {
-    return db.one('select * from users where id=$1', [id])
-}
-
-// Update
-function getTodosForUser(user_id) {
-    return db.any('select * from todos where user_id=$1', [user_id])
-}
-
-function updateUserNameById(newName, id) {
-    return db.result('update users set name=$1 where id=$2', [newName, id])
-}
-
-// Delete
-function deleteUserById(id) {
-    return db.result('delete from users where id=$1', [id])
-}
-
-module.exports = {
-    addUser,
-    getAllUsers,
-    getUserById,
-    updateUserNameById,
-    deleteUserById,
-    getTodosForUser,
-}
+module.exports = User
+// {
+//     addUser,
+//     getAllUsers,
+//     getUserById,
+//     updateUserNameById,
+//     deleteUserById,
+//     getTodosForUser,
+// }
