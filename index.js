@@ -1,11 +1,22 @@
+const pageTemplate = require('./templates/page')
+const page = pageTemplate.page
+
 const express = require('express')
 const app = express()
 const port = 3000
+
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.json())
+
+app.use(bodyParser.urlencoded({ extended: false }))
+
 
 app.get('/', (req, res) => res.send('Try /users or /todos'))
 
 
 // define endpoints
+// listen for get requests
 app.get('/users', (req, res) => {
     User.getAll()
     .then(users => {
@@ -13,10 +24,20 @@ app.get('/users', (req, res) => {
     })
 })
 
+// listen for post requests
+app.post('/users', (req, res) => {
+    const newUserName = req.body.name
+    User.add(newUserName)
+    .then(user => {
+        res.send(user)
+    })
+})
+
 app.get('/todos', (req, res) => {
     Todo.getAll()
     .then(todos => {
-        res.send(todos)
+        content = listItem(todos)
+        res.send(page(content))
     })
 })
 
@@ -28,7 +49,18 @@ app.get('/users/byId/:id([0-9]+)', (req, res) => {
     })
 })
 
-app.get('/users/byName/:name([A-Z | a-z]+)', (req, res) => {
+app.post('/users/byId/:id([0-9]+)', (req, res) => {
+    const newName = req.body.name
+    User.getById(req.params.id)
+    .then(user => {
+        user.updateName(newName).then(() => {
+            res.send(user)
+        })
+    })
+})
+
+
+app.get('/users/byName/:name([A-Z|a-z]+)', (req, res) => {
     User.getByName(req.params.name)
     .then(users => {
         res.send(users)
