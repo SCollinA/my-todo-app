@@ -4,8 +4,8 @@ const Todo = require('./Todo')
 
 class User {
     constructor(id, name) {
-        this.name = name
         this.id = id
+        this.name = name
     }
 
     // Create
@@ -26,8 +26,10 @@ class User {
     }
 
     getTodos() {
-        return db.any('select * from todos where user_id=$1', [this.id])
-        .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed, result.user_id)))
+        return db.any('select todos.id, todos.name, todos.completed from todos join users_todos ut on todos.id=ut.todo_id join users on ut.user_id=users.id where users.id=$1', [this.id])
+        .then(resultsArray => resultsArray.map(result => new User(result.id, result.name)))
+        // return db.any('select * from todos where user_id=$1', [this.id])
+        // .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed, result.user_id)))
     }
     
     // Update
@@ -35,23 +37,26 @@ class User {
         this.name = newName
         return db.result('update users set name=$1 where id=$2', [newName, this.id])
     }
+
+    chooseTodo(todo_id) {
+        return db.result('insert into users_todos (user_id, todo_id) values ($1, $2)', [this.id, todo_id])
+    }
+
+    removeTodo(todo_id) {
+        return db.result('delete from users_todos where user_id=$1 and todo_id=$2', [this.id, todo_id])
+    }
     
     // Delete
     delete() {
-        return db.result('delete from users where id=$1', [this.id])
+        // need to make a join to remove references to this user on users_todos
+        return db.result('delete from users_todos where user_id=$1', [this.id])
+        .then(() => db.result('delete from users where id=$1', [this.id]))
     }
     
     static deleteById(id) {
-        return db.result('delete from users where id=$1', [id])
+        return db.result('delete from users_todos where user_id=$1', [id])
+        .then(() => db.result('delete from users where id=$1', [id]))
     }
 }
 
 module.exports = User
-// {
-//     addUser,
-//     getAllUsers,
-//     getUserById,
-//     updateUserNameById,
-//     deleteUserById,
-//     getTodosForUser,
-// }

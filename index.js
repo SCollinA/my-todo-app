@@ -22,7 +22,7 @@ app.get('/todos', (req, res) => {
 
 // define routing parameters
 
-app.get('/users/:id', (req, res) => {
+app.get('/users/:id([0-9]+)', (req, res) => {
     User.getById(req.params.id)
     .then(user => {
         res.send(todo);
@@ -44,9 +44,9 @@ const Todo = require('./models/Todo')
 const User = require('./models/User')
 
 
-Todo.getById(2)
-.then(todo => todo.getUsers())
-.then(console.log)
+// User.getById(1)
+// .then(user => user.getTodos())
+// .then(console.log)
 
 
 // User.add('Jack')
