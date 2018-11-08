@@ -19,6 +19,11 @@ class User {
         return db.one('select * from users where id=$1', [id])
         .then(result => new User(result.id, result.name))
     }
+
+    static getByName(name) {
+        return db.any('select * from users where name ilike \'%$1:raw%\'', [name])
+        .then(resultsArray => resultsArray.map(result => new User(result.id, result.name)))
+    }
     
     static getAll() {
         return db.any('select * from users')

@@ -22,12 +22,18 @@ class Todo {
     }
 
     static getByName(name) {
-        return db.any('select * from todos where name ilike "%$1:raw%"', [name])
+        return db.any('select * from todos where name ilike \'%$1:raw%\'', [name])
         .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed)))
     }
 
+    static getByCompleted(completed) {
+        return db.any('select * from todos where completed=$1', [completed])
+        .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed)))
+    }
+    
     static getAll() {
         return db.any('select * from todos')
+        // .then(resultsArray => Promise.all(resultsArray.map(result => Todo.getById(result.id))))
         .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed)))
     }
 

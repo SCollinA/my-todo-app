@@ -9,44 +9,57 @@ app.get('/', (req, res) => res.send('Try /users or /todos'))
 app.get('/users', (req, res) => {
     User.getAll()
     .then(users => {
-        res.send(users);
+        res.send(users)
     })
 })
 
 app.get('/todos', (req, res) => {
     Todo.getAll()
     .then(todos => {
-        res.send(todos);
+        res.send(todos)
     })
 })
 
 // define routing parameters
-
-app.get('/users/:id([0-9]+)', (req, res) => {
+app.get('/users/byId/:id([0-9]+)', (req, res) => {
     User.getById(req.params.id)
-    .then(user => {
-        res.send(user);
-    })
-})
-
-app.get('/users/:name([a-z]+)', (req, res) => {
-    User.getByName(req.params.name)
     .then(user => {
         res.send(user)
     })
 })
 
-app.get('/todos/:id([0-9]+'), (req, res) => {
-    Todo.getById(req.params.id)
-    .then(todo => {
-        res.send(todo);
+app.get('/users/byName/:name([A-Z | a-z]+)', (req, res) => {
+    User.getByName(req.params.name)
+    .then(users => {
+        res.send(users)
     })
 })
 
-app.get('/todos/:name([a-z]+)', (req, res) => {
-    Todo.getByName(req.params.name)
+app.get('/todos/byId/:id([0-9]+)', (req, res) => {
+    Todo.getById(req.params.id)
     .then(todo => {
         res.send(todo)
+    })
+})
+
+app.get('/todos/byName/:name([A-Z | a-z]+)', (req, res) => {
+    Todo.getByName(req.params.name)
+    .then(todos => {
+        res.send(todos)
+    })
+})
+
+app.get('/todos/byCompleted', (req, res) => {
+    Todo.getByCompleted(true)
+    .then(todos => {
+        res.send(todos)
+    })
+})
+
+app.get('/todos/byPending', (req, res) => {
+    Todo.getByCompleted(false)
+    .then(todos => {
+        res.send(todos)
     })
 })
 
