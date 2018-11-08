@@ -44,21 +44,25 @@ const Todo = require('./models/Todo')
 const User = require('./models/User')
 
 
+Todo.getById(2)
+.then(todo => todo.getUsers())
+.then(console.log)
 
-User.add('Jack')
-.then(user => {
-    console.log(user)
-    return Todo.add('walk the chewbacca', true)
-    .then(todo => {
-        todo.assignToUser(user.id)
-        todo.toggleComplete()
-        todo.updateName('walk the yoda')
-    })
-    .then(() => {
-        user.getTodos()
-        .then(console.log)    
-    })
-})
+
+// User.add('Jack')
+// .then(user => {
+//     console.log(user)
+//     return Todo.add('walk the chewbacca', true)
+//     .then(todo => {
+//         todo.assignToUser(user.id)
+//         todo.toggleComplete()
+//         todo.updateName('walk the yoda')
+//     })
+//     .then(() => {
+//         user.getTodos()
+//         .then(console.log)    
+//     })
+// })
 
 
 // should we try to limit the number of calls to database 

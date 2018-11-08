@@ -1,10 +1,10 @@
 insert into todos 
 (name, completed)
 values
-('go shopping', true, 2),
-('mow lawn', false, 1),
-('ride bike', true, 3),
-('juggle', false, 4);
+('go shopping', true),
+('mow lawn', false),
+('ride bike', true),
+('juggle', false);
 
 insert into users
 (name)
@@ -14,3 +14,12 @@ values
 ('John'),
 ('Whatshisname'),
 ('Whatshername');
+
+insert into users_todos
+(user_id, todo_id)
+values
+(1, 2),
+(2, 3),
+(3, 4),
+(4, 1),
+(5, 2)

@@ -7,6 +7,11 @@ create table users (
 create table todos (
     id serial primary key,
     name text,
-    completed boolean,
-    user_id integer references users (id)
+    completed boolean
+);
+
+create table users_todos (
+    id serial primary key,
+    user_id integer references users (id),
+    todo_id integer references todos (id)
 );
