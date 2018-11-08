@@ -21,6 +21,11 @@ class Todo {
         .then(result => new Todo(result.id, result.name, result.completed))
     }
 
+    static getByName(name) {
+        return db.any('select * from todos where name ilike "%$1:raw%"', [name])
+        .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed)))
+    }
+
     static getAll() {
         return db.any('select * from todos')
         .then(resultsArray => resultsArray.map(result => new Todo(result.id, result.name, result.completed)))

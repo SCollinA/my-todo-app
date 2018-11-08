@@ -25,14 +25,28 @@ app.get('/todos', (req, res) => {
 app.get('/users/:id([0-9]+)', (req, res) => {
     User.getById(req.params.id)
     .then(user => {
+        res.send(user);
+    })
+})
+
+app.get('/users/:name([a-z]+)', (req, res) => {
+    User.getByName(req.params.name)
+    .then(user => {
+        res.send(user)
+    })
+})
+
+app.get('/todos/:id([0-9]+'), (req, res) => {
+    Todo.getById(req.params.id)
+    .then(todo => {
         res.send(todo);
     })
 })
 
-app.get('/todos/:id', (req, res) => {
-    Todo.getById(req.params.id)
+app.get('/todos/:name([a-z]+)', (req, res) => {
+    Todo.getByName(req.params.name)
     .then(todo => {
-        res.send(todo);
+        res.send(todo)
     })
 })
 
