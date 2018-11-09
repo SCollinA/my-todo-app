@@ -3,6 +3,9 @@ const Todo = require('./models/Todo')
 const User = require('./models/User')
 
 const bodyParser = require('body-parser')
+const pageTemplate = require('./views/view.js')
+const page = pageTemplate.page
+const list = pageTemplate.list
 
 const express = require('express')
 const app = express()
@@ -14,20 +17,51 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(bodyParser.json())
 
+
+app.get('/', (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Document</title>
+        </head>
+        <body>
+            <h1>Hello again.</h1>
+        </body>
+    </html>
+    `)
+})
+
+
 app.get('/', (req, res) => res.send('Try /users or /todos'))
 
 // define endpoints
+// listen for get requests
 app.get('/users', (req, res) => {
     User.getAll()
     .then(users => {
-        res.send(users)
+        const content = list(users)
+        res.send(page(content))
+    })
+})
+
+// listen for post requests
+app.post('/users', (req, res) => {
+    const newUserName = req.body.name
+    User.add(newUserName)
+    .then(user => {
+        res.send(user)
     })
 })
 
 app.get('/todos', (req, res) => {
     Todo.getAll()
     .then(todos => {
-        res.send(todos)
+        content = list(todos)
+        res.send(page(content))
     })
 })
 
@@ -39,7 +73,18 @@ app.get('/users/byId/:id([0-9]+)', (req, res) => {
     })
 })
 
-app.get('/users/byName/:name([A-Z | a-z]+)', (req, res) => {
+app.post('/users/byId/:id([0-9]+)', (req, res) => {
+    const newName = req.body.name
+    User.getById(req.params.id)
+    .then(user => {
+        user.updateName(newName).then(() => {
+            res.send(user)
+        })
+    })
+})
+
+
+app.get('/users/byName/:name([A-Z|a-z]+)', (req, res) => {
     User.getByName(req.params.name)
     .then(users => {
         res.send(users)
