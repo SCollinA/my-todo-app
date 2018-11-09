@@ -1,5 +1,6 @@
-const pageTemplate = require('./templates/page')
+const pageTemplate = require('./views/view.js')
 const page = pageTemplate.page
+const list = pageTemplate.list
 
 const express = require('express')
 const app = express()
@@ -12,7 +13,22 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 
-app.get('/', (req, res) => res.send('Try /users or /todos'))
+app.get('/', (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Document</title>
+        </head>
+        <body>
+            <h1>Hello again.</h1>
+        </body>
+    </html>
+    `)
+})
 
 
 // define endpoints
@@ -20,7 +36,8 @@ app.get('/', (req, res) => res.send('Try /users or /todos'))
 app.get('/users', (req, res) => {
     User.getAll()
     .then(users => {
-        res.send(users)
+        const content = list(users)
+        res.send(page(content))
     })
 })
 
@@ -36,7 +53,7 @@ app.post('/users', (req, res) => {
 app.get('/todos', (req, res) => {
     Todo.getAll()
     .then(todos => {
-        content = listItem(todos)
+        content = list(todos)
         res.send(page(content))
     })
 })
