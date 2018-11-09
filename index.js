@@ -1,9 +1,20 @@
+
+const Todo = require('./models/Todo')
+const User = require('./models/User')
+
+const bodyParser = require('body-parser')
+
 const express = require('express')
 const app = express()
 const port = 3000
 
-app.get('/', (req, res) => res.send('Try /users or /todos'))
+app.use(express.static('public'))
 
+app.use(bodyParser.urlencoded({extended: false}))
+
+app.use(bodyParser.json())
+
+app.get('/', (req, res) => res.send('Try /users or /todos'))
 
 // define endpoints
 app.get('/users', (req, res) => {
@@ -66,10 +77,6 @@ app.get('/todos/byPending', (req, res) => {
 app.listen(port, () => console.log(`My Todo App listening on port ${port}!`))
 
 // require('dotenv').config()
-
-const Todo = require('./models/Todo')
-const User = require('./models/User')
-
 
 // User.getById(1)
 // .then(user => user.getTodos())
